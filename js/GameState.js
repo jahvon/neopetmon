@@ -287,6 +287,7 @@ class GameState {
 
     reset() {
         localStorage.removeItem('neopetmon_save');
+        localStorage.removeItem('neopetGallery');
         this.player = null;
         this.petStats = {
             hp: 100,
@@ -319,6 +320,9 @@ class GameState {
         };
         this.battlesWon = 0;
         this.battlesSinceSpecial = 0;
+        this.wildPets = [];
+        this.specialItems = [];
+        this.playerPosition = null;
         this.gallery = new NeopetGallery();
     }
 }

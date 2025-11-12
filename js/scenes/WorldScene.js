@@ -85,7 +85,7 @@ class WorldScene extends Phaser.Scene {
         // 'N' key for New Game
         this.input.keyboard.on('keydown-N', () => {
             if (confirm('Are you sure you want to start a new game? All progress will be lost!')) {
-                localStorage.removeItem('neopetmonSave');
+                localStorage.removeItem('neopetmon_save');
                 localStorage.removeItem('neopetGallery');
                 window.location.reload();
             }
@@ -943,7 +943,7 @@ class WorldScene extends Phaser.Scene {
             newGameButton.onclick = () => {
                 if (confirm('Are you sure you want to start a new game? All progress will be lost!')) {
                     // Clear all saved data
-                    localStorage.removeItem('neopetmonSave');
+                    localStorage.removeItem('neopetmon_save');
                     localStorage.removeItem('neopetGallery');
                     // Reload the page to restart
                     window.location.reload();

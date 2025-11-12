@@ -43,7 +43,7 @@ function createUIOverlay() {
         border-top: none;
         border-radius: 0 0 ${BrandWindows.FRAME.borderRadius}px ${BrandWindows.FRAME.borderRadius}px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        display: flex;
+        display: none;
         flex-direction: row;
         gap: 20px;
         padding: 15px 20px;

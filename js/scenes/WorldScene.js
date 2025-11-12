@@ -121,9 +121,19 @@ class WorldScene extends Phaser.Scene {
             }
         });
 
+        // Show the game footer
+        this.showGameFooter();
+
         // Update external UI
         this.updateExternalUI();
         this.updateTitleOverlay();
+    }
+
+    showGameFooter() {
+        const footer = document.getElementById('game-footer');
+        if (footer) {
+            footer.style.display = 'flex';
+        }
     }
 
     initializeCollisionMask() {

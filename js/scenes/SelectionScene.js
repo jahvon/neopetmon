@@ -2,7 +2,7 @@ class SelectionScene extends Phaser.Scene {
     constructor() {
         super({ key: 'SelectionScene' });
         this.currentPetIndex = 0;
-        this.maxPets = 56; // 8 cols x 7 rows
+        this.maxPets = 55; // Exclude species 56 (Bottled Faerie/Potion)
         this.petName = '';
     }
 

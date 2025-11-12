@@ -339,14 +339,14 @@ class WorldScene extends Phaser.Scene {
         // Only spawn new items if we have fewer than 2
         const numToSpawn = Math.max(0, 2 - this.specialItems.length);
 
-        // Define possible item types
+        // Define possible item types (using brand colors)
         const itemTypes = [
-            { type: 'potion', emoji: '💊', color: 0xFF69B4 },
-            { type: 'food', data: 'apple', emoji: '🍎', color: 0xFF0000 },
-            { type: 'food', data: 'choc_donut', emoji: '🍩', color: 0x8B4513 },
-            { type: 'food', data: 'pizza_slice', emoji: '🍕', color: 0xFFD700 },
-            { type: 'toy', data: 'bouncy_ball', emoji: '⚽', color: 0x00FF00 },
-            { type: 'toy', data: 'plushie', emoji: '🧸', color: 0xFFA500 }
+            { type: 'potion', emoji: '💊', color: BrandColors.SECONDARY.FAERIELAND_PURPLE },
+            { type: 'food', data: 'apple', emoji: '🍎', color: BrandColors.SECONDARY.BRIGHT_RED },
+            { type: 'food', data: 'choc_donut', emoji: '🍩', color: BrandColors.SECONDARY.CHEERY_ORANGE },
+            { type: 'food', data: 'pizza_slice', emoji: '🍕', color: BrandColors.PRIMARY.GOLDEN_YELLOW },
+            { type: 'toy', data: 'bouncy_ball', emoji: '⚽', color: BrandColors.PRIMARY.NEOPIAN_BLUE },
+            { type: 'toy', data: 'plushie', emoji: '🧸', color: BrandColors.PRIMARY.GRASSY_GREEN }
         ];
 
         for (let i = 0; i < numToSpawn; i++) {
@@ -403,30 +403,29 @@ class WorldScene extends Phaser.Scene {
     }
 
     createSpecialItem(itemData) {
-        // Create item background circle
-        const itemCircle = this.add.circle(itemData.x, itemData.y, 20, itemData.color);
-        itemCircle.setStrokeStyle(3, 0xFFFFFF);
-        itemCircle.setDepth(50);
+        // Create item icon - use sprite for potion (species 55), emoji for others
+        let itemIcon;
+        if (itemData.type === 'potion') {
+            // Use species 55 (Bottled Faerie) sprite for potion
+            itemIcon = this.add.sprite(itemData.x, itemData.y, 'neopets', 55);
+            itemIcon.setScale(0.15);
+            itemIcon.setOrigin(0.5);
+        } else {
+            // Use emoji for other items
+            itemIcon = this.add.text(itemData.x, itemData.y, itemData.emoji, {
+                fontSize: '32px',
+                fontFamily: 'Arial'
+            }).setOrigin(0.5);
+        }
 
-        // Create item emoji/icon
-        const itemText = this.add.text(itemData.x, itemData.y, itemData.emoji, {
-            fontSize: '24px',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5);
-        itemText.setDepth(51);
-
-        // Create container
-        const itemContainer = this.add.container(0, 0, [itemCircle, itemText]);
-        itemContainer.setData('id', itemData.id);
-        itemContainer.setData('type', itemData.type);
-        itemContainer.setData('data', itemData.data);
-        itemContainer.setSize(40, 40);
-        itemContainer.x = itemData.x;
-        itemContainer.y = itemData.y;
+        itemIcon.setData('id', itemData.id);
+        itemIcon.setData('type', itemData.type);
+        itemIcon.setData('data', itemData.data);
+        itemIcon.setDepth(50);
 
         // Bobbing animation
         this.tweens.add({
-            targets: itemContainer,
+            targets: itemIcon,
             y: itemData.y - 10,
             duration: 1000,
             yoyo: true,
@@ -434,19 +433,23 @@ class WorldScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
-        this.specialItems.push(itemContainer);
+        this.specialItems.push(itemIcon);
     }
 
     saveSpecialItemsData() {
-        const itemsData = this.specialItems.map(item => ({
-            id: item.getData('id'),
-            x: item.x,
-            y: item.y,
-            type: item.getData('type'),
-            data: item.getData('data'),
-            emoji: item.list[1].text,
-            color: item.list[0].fillColor
-        }));
+        const itemsData = this.specialItems.map(item => {
+            const itemType = item.getData('type');
+
+            return {
+                id: item.getData('id'),
+                x: item.x,
+                y: item.y,
+                type: itemType,
+                data: item.getData('data'),
+                emoji: itemType === 'potion' ? '💊' : (item.text || ''),
+                color: 0xFFFFFF // Color no longer used, but kept for compatibility
+            };
+        });
         gameState.updateSpecialItems(itemsData);
     }
 
@@ -507,7 +510,7 @@ class WorldScene extends Phaser.Scene {
     }
 
     update() {
-        if (!this.playerPet) return;
+        if (!this.playerPet || !this.cameras.main) return;
 
         const speed = 3;
         let moving = false;
